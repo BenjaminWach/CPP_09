@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 14:59:58 by bwach             #+#    #+#             */
-/*   Updated: 2025/04/28 22:50:57 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/12 22:21:59 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,15 @@ ExchangeRate& ExchangeRate::operator=(const ExchangeRate& other)
 	return (*this);
 }
 
-//Methods_public:
-void ExchangeRate::loadData(const std::string& filePath)
+//Public Method:
+void	ExchangeRate::excecuteBtc(std::string& filePath, std::string& inputFile)
+{
+	loadData(filePath);
+	processInputFile(inputFile);
+}
+
+//Private Methods:
+void	ExchangeRate::loadData(const std::string& filePath)
 {
 	std::ifstream dataFile(filePath.c_str());
 	if (!dataFile.is_open())
@@ -86,8 +93,53 @@ void ExchangeRate::loadData(const std::string& filePath)
 
 void	ExchangeRate::processInputFile(const std::string& inputFile)
 {
-	//read the input file
-	//validate and rpint out
+	std::ifstream dataFile(inputFile.c_str());
+	if (!dataFile.is_open())
+	{
+		std::cerr << "Error: could not open file " << inputFile << std::endl;
+		return;
+	}
+
+	std::string line;
+	while (std::getline(dataFile, line))
+	{
+		if (line.empty()) // Skip empty lines
+			continue;
+
+		size_t delimiterPos = line.find(','); // Split the line into date and value
+		if (delimiterPos == std::string::npos)
+		{
+			std::cerr << "Error: bad format in line => " << line << std::endl;
+			continue;
+		}
+
+		std::string date = line.substr(0, delimiterPos);
+		std::string valueStr = line.substr(delimiterPos + 1);
+		// Validate date and value
+		if (!isValidDate(date))
+		{
+			std::cerr << "Error: invalid date in line => " << line << std::endl;
+			continue;
+		}
+		if (!isValidValue(valueStr))
+		{
+			std::cerr << "Error: invalid value in line => " << line << std::endl;
+			continue;
+		}
+
+		std::string	valueStr1 = valueStr;
+		std::stringstream ss(valueStr1);
+		float value;
+		if (!(ss >> value))
+		{
+			std::cerr << "Error: failed to parse value in line => " << line << std::endl;
+			continue;
+		}
+
+		float result = calculRate(date, value);
+		displayResults(date, valueStr, result);
+	}
+	dataFile.close();
 }
 
 void	ExchangeRate::displayResults(const std::string& date, const std::string& value, float& res) const
