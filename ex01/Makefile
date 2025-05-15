@@ -6,7 +6,7 @@
 #    By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/14 14:01:16 by bwach             #+#    #+#              #
-#    Updated: 2025/05/14 18:20:33 by bwach            ###   ########.fr        #
+#    Updated: 2025/05/15 04:13:17 by bwach            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 SOURCE = main.cpp \
+		RPN.cpp \
 	
 
 OBJ_DIR = obj
