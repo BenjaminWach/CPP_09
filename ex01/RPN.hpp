@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 18:19:47 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/15 04:21:00 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/15 04:25:16 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ class Rpn
 
 	public:
 			Rpn();
-			Rpn(const std::string& input);
 			Rpn(const Rpn& rhn);
 			~Rpn();
 

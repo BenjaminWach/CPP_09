@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 18:20:53 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/15 04:19:19 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/15 04:25:52 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 //Constructor && destructor:
 Rpn::Rpn(): _Input("") {}
-Rpn::Rpn(const std::string& input): _Input(input) {}
 Rpn::Rpn(const Rpn& rhn)
 {
 	*this = rhn;
