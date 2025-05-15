@@ -1,0 +1,32 @@
+lkasldkjlasjd
+
+date | value
+2024-01-15 |
+2024-01-15 -1
+2024-01-16
+2024-01-16 | hello8
+
+
+		2019-05-06   | 		12
+2019-05-06  | 	0
+2018-12-31      |99
+2017-07-21|7.8			
+
+
+2020-02-29 | 29     // Valid leap day in 2020
+2021-02-29 | 5       // Invalid: 2021 is not a leap year
+2020-02-30 | 6       // Invalid: Even in 2020, February has at most 29 days
+2023-04-31 | 10      // Invalid: April only has 30 days
+2030-11-31 | -15     // Invalid: November has only 30 days
+2001-42-42 | 4       // Malformed date entry
+
+
+2018-10-31 | -31.5
+2015-05-20 | 55
+2015-05-20 | 1000
+2010-12-12 | 12.12
+2010-12-12 | -12.12
+
+
+1988-11-09 | 1
+2026-11-09 | 1

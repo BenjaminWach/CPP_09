@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 14:59:58 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/12 22:21:59 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/15 01:53:29 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #include <sstream>
 
 //constructors and others:
-ExchangeRate::ExchangeRate(): _Data(), _dataFileName(NULL) {}
-ExchangeRate::ExchangeRate(const std::string& DataFile): _Data(), _dataFileName(DataFile) {}
+ExchangeRate::ExchangeRate(): _InputFile("") {}
+ExchangeRate::ExchangeRate(const std::string& inputFile): _InputFile(inputFile) {}
 ExchangeRate::ExchangeRate(ExchangeRate& other)
 {
 	*this = other;
@@ -29,7 +29,7 @@ ExchangeRate& ExchangeRate::operator=(const ExchangeRate& other)
 	if (this != &other)
 	{
 		this->_Data = other._Data;
-		this->_dataFileName = other._dataFileName;
+		this->_InputFile = other._InputFile;
 	}
 	return (*this);
 }
@@ -37,115 +37,12 @@ ExchangeRate& ExchangeRate::operator=(const ExchangeRate& other)
 //Public Method:
 void	ExchangeRate::excecuteBtc(std::string& filePath, std::string& inputFile)
 {
+	// std::cout << "filePath: " << filePath << std::endl;
+	// std::cout << "inputFile: " << inputFile << std::endl;
 	loadData(filePath);
 	processInputFile(inputFile);
 }
 
-//Private Methods:
-void	ExchangeRate::loadData(const std::string& filePath)
-{
-	std::ifstream dataFile(filePath.c_str());
-	if (!dataFile.is_open())
-	{
-		std::cerr << "Error: could not open file " << filePath << std::endl;
-		return;
-	}
-
-	std::string line;
-	while (std::getline(dataFile, line))
-	{
-		if (line.empty()) // Skip empty lines
-			continue;
-
-		size_t delimiterPos = line.find(','); // Split the line into date and value
-		if (delimiterPos == std::string::npos)
-		{
-			std::cerr << "Error: bad format in line => " << line << std::endl;
-			continue;
-		}
-
-		std::string date = line.substr(0, delimiterPos);
-		std::string valueStr = line.substr(delimiterPos + 1);
-		// Validate date and value
-		if (!isValidDate(date))
-		{
-			std::cerr << "Error: invalid date in line => " << line << std::endl;
-			continue;
-		}
-		if (!isValidValue(valueStr))
-		{
-			std::cerr << "Error: invalid value in line => " << line << std::endl;
-			continue;
-		}
-
-		// Convert value to float using stringstream
-		std::stringstream ss(valueStr);
-		float value;
-		if (!(ss >> value))
-		{
-			std::cerr << "Error: failed to parse value in line => " << line << std::endl;
-			continue;
-		}
-		_Data[date] = value; // Insert into the map
-	}
-	dataFile.close();
-}
-
-void	ExchangeRate::processInputFile(const std::string& inputFile)
-{
-	std::ifstream dataFile(inputFile.c_str());
-	if (!dataFile.is_open())
-	{
-		std::cerr << "Error: could not open file " << inputFile << std::endl;
-		return;
-	}
-
-	std::string line;
-	while (std::getline(dataFile, line))
-	{
-		if (line.empty()) // Skip empty lines
-			continue;
-
-		size_t delimiterPos = line.find(','); // Split the line into date and value
-		if (delimiterPos == std::string::npos)
-		{
-			std::cerr << "Error: bad format in line => " << line << std::endl;
-			continue;
-		}
-
-		std::string date = line.substr(0, delimiterPos);
-		std::string valueStr = line.substr(delimiterPos + 1);
-		// Validate date and value
-		if (!isValidDate(date))
-		{
-			std::cerr << "Error: invalid date in line => " << line << std::endl;
-			continue;
-		}
-		if (!isValidValue(valueStr))
-		{
-			std::cerr << "Error: invalid value in line => " << line << std::endl;
-			continue;
-		}
-
-		std::string	valueStr1 = valueStr;
-		std::stringstream ss(valueStr1);
-		float value;
-		if (!(ss >> value))
-		{
-			std::cerr << "Error: failed to parse value in line => " << line << std::endl;
-			continue;
-		}
-
-		float result = calculRate(date, value);
-		displayResults(date, valueStr, result);
-	}
-	dataFile.close();
-}
-
-void	ExchangeRate::displayResults(const std::string& date, const std::string& value, float& res) const
-{
-	std::cout << date << " => " << value << " = " << res << std::endl;
-}
 
 //Private Methods:
 bool	ExchangeRate::isValidDate(const std::string& date) const
@@ -183,17 +80,17 @@ bool	ExchangeRate::isValidDate(const std::string& date) const
 	return true;
 }
 
-bool ExchangeRate::isValidValue(const std::string& value) const
+bool ExchangeRate::isValidValue(std::string& value) const
 {
+	//cut the potential extra
+	size_t cut = value.find_first_not_of("0123456789.-");
+	if (cut != std::string::npos)
+		value = value.substr(0, cut);
+
 	std::stringstream ss(value);
 	float floatValue;
-	char remaining;
+	ss >> floatValue;
 
-	if (!(ss >> floatValue) || (ss >> remaining))
-	{
-		std::cerr << "Error: not a positive number." << std::endl;
-		return false;
-	}
 	if (floatValue < 0)
 	{
 		std::cerr << "Error: not a positive number." << std::endl;
@@ -205,4 +102,130 @@ bool ExchangeRate::isValidValue(const std::string& value) const
 		return false;
 	}
 	return true;
+}
+
+
+//Load the CSV data to the map
+void	ExchangeRate::loadData(const std::string& filePath)
+{
+	std::ifstream dataFile(filePath.c_str());
+	if (!dataFile.is_open())
+	{
+		std::cerr << "Error: could not open file " << filePath << std::endl;
+		return;
+	}
+
+	std::string line;
+	while (std::getline(dataFile, line))
+	{
+		if (line.empty()) // Skip empty lines
+			continue;
+
+		size_t delimiterPos = line.find(','); // Split the line into date and value
+		if (delimiterPos == std::string::npos)
+		{
+			std::cerr << "Error: bad format in line => " << line << std::endl;
+			continue;
+		}
+
+		std::string date = line.substr(0, delimiterPos);
+		std::string rateStr = line.substr(delimiterPos + 1);
+		// Validate date and value
+		if (!isValidDate(date))
+		{
+			continue;
+		}
+		// Convert rate to float using stringstream
+		std::stringstream ss(rateStr);
+		float rate;
+		if (!(ss >> rate))
+		{
+			std::cerr << "Error: failed to parse value in line => " << line << std::endl;
+			continue;
+		}
+		_Data[date] = rate; // Insert into the map
+		//_Data.insert(std::make_pair(date, rate)); //permet d'eviter d'ecraser un taux deja present
+	}
+	dataFile.close();
+}
+
+//Read the input text file and execute
+void	ExchangeRate::processInputFile(const std::string& inputFile)
+{
+	std::ifstream dataFile(inputFile.c_str());
+	if (!dataFile.is_open())
+	{
+		std::cerr << "Error: could not open file " << inputFile << std::endl;
+		return;
+	}
+
+	std::string line;
+	while (std::getline(dataFile, line))
+	{
+		if (line.empty()) // Skip empty lines
+			continue;
+
+		if (line.find("date | value") != std::string::npos) //if find "..." skip
+			continue;
+
+		size_t delimiterPos = line.find('|');
+		if (delimiterPos == std::string::npos) //if not found
+		{
+			std::cerr << "Error: bad input => " << line << std::endl;
+			continue;
+		}
+
+		//cut the line into date and value
+		std::string date = line.substr(0, delimiterPos);
+		std::string valueStr = line.substr(delimiterPos + 1);
+
+		//trim the space infront and behind
+		date.erase(0, date.find_first_not_of(" \t"));
+		date.erase(date.find_last_not_of(" \t") + 1);
+		valueStr.erase(0, valueStr.find_first_not_of(" \t"));
+		valueStr.erase(valueStr.find_last_not_of(" \t") + 1);
+
+		// Validate date and value
+		if (!isValidDate(date))
+			continue;
+		if (!isValidValue(valueStr))
+			continue;
+
+		std::string	valueStr1 = valueStr;
+		std::stringstream ss(valueStr1);
+		float value;
+		if (!(ss >> value))
+		{
+			std::cerr << "Error: failed to parse value in line => " << line << std::endl;
+			continue;
+		}
+
+		float result = calculValue(date, value);
+		displayResults(date, valueStr, result);
+	}
+	dataFile.close();
+}
+
+float	ExchangeRate::calculValue(const std::string& date, float& value) const
+{
+	//iterator to the first element of map that the key isnt inferior to the date
+	//if date exist, it point to
+	//if not it point to the superior date on the pile;
+	std::map<std::string, float>::const_iterator it = _Data.lower_bound(date);
+
+	if (it == _Data.end() || it->first != date)
+	{
+		if (it == _Data.begin())
+		{
+			std::cerr << "Error: no rate available for this date or before => " << date << std::endl;
+			return (0.0f);
+		}
+		--it;
+	}
+	return (value * it->second);
+}
+
+void	ExchangeRate::displayResults(const std::string& date, const std::string& value, float& res) const
+{
+	std::cout << date << " => " << value << " = " << res << std::endl;
 }
