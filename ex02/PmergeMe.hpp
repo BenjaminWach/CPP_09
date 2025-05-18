@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:12 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/16 18:11:03 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/18 23:20:56 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <deque>
 
 class	PmergeMe
 {
 	private:
-			std::vector<int>	_Vec;
-			std::deque<int>		_Deq;
+			size_t	_rangeSize;
+			std::vector<std::pair<int, int> >	_Vec;
+			std::deque<std::pair<int, int> >	_Deq;
 
-			void	fordJohnFSort(std::vector<int>& v);
-			void	fordJohnFSort(std::deque<int>& d);
+			void	fordJohnFSort(std::vector<std::pair<int,int> >& v);
+			void	fordJohnFSort(std::deque<std::pair<int,int> >& d);
 
 			void	loadAllData(char **av);
 			void	printBefore(char **av);
