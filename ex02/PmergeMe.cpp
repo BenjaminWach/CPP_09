@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:07 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/27 01:57:56 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/27 02:06:03 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,8 +186,9 @@ static void	insertOtherLosers(std::vector<int>& finalList, std::vector<Pair>& pa
 		{
 			// Insert the loser in the correct position to keep finalList sorted
 			int loser = pairs[i].loser;
+			size_t winnerPos = pairs[i].winnerInd;
 			size_t left = 0;
-			size_t right = finalList.size();
+			size_t right = winnerPos;
 			while (left < right)
 			{
 				size_t mid = (left + right) / 2;
@@ -234,11 +235,13 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		p.loserInserted = false;
 		pairs.push_back(p);
 	}
-
-	std::vector<int> sortedWinner; //making pairs and sort winner
+	
+	//making pairs and sort winner
+	std::vector<int> sortedWinner;
 	recursiveSort(sortedWinner, pairs);
-
-	for (size_t idx = 0; idx < sortedWinner.size(); ++idx) //putting the right index
+	
+	//putting the right index
+	for (size_t idx = 0; idx < sortedWinner.size(); ++idx)
 	{
 		for (size_t j = 0; j < pairs.size(); ++j)
 		{
