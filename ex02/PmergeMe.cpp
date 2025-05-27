@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:07 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/27 02:06:03 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/28 00:42:41 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ static	void	jacobsthalBinary(std::vector<int>& sortedWinner, std::vector<Pair>& 
 			break;
 	}
 
+	//insert the losers
 	for (size_t x = 0; x < jacobsthal.size(); ++x)
 	{
 		size_t i = jacobsthal[x];
@@ -214,6 +215,7 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		{
 			p.winner = v[i];
 			p.loser = v[i + 1];
+			p.ogInd = i;
 			p.winnerInd = i;
 			p.loserInserted = false;
 		}
@@ -221,6 +223,7 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		{
 			p.winner = v[i + 1];
 			p.loser = v[i];
+			p.ogInd = i + 1;
 			p.winnerInd = i + 1;
 			p.loserInserted = false;
 		}
@@ -231,6 +234,7 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		Pair p;
 		p.winner = v[i];
 		p.loser = -1;
+		p.ogInd = pairs.size();
 		p.winnerInd = pairs.size();
 		p.loserInserted = false;
 		pairs.push_back(p);
@@ -245,7 +249,7 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 	{
 		for (size_t j = 0; j < pairs.size(); ++j)
 		{
-			if (pairs[j].winner == sortedWinner[idx])
+			if (pairs[j].winner == sortedWinner[idx] && pairs[j].winnerInd == pairs[j].ogInd)
 			{
 				pairs[j].winnerInd = idx;
 				break;
@@ -260,10 +264,62 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 
 
 /*############################################################################################*/
-// void	PmergeMe::fordJohnFSort(std::deque<int>& d)
-// {
-// 	;
-// }
+void	PmergeMe::fordJohnFSort(std::deque<int>& d)
+{
+std::vector<Pair> pairs;
+	size_t i = 0;
+	for (; i + 1 < d.size(); i += 2)
+	{
+		Pair p;
+		if (d[i] > d[i + 1])
+		{
+			p.winner = d[i];
+			p.loser = d[i + 1];
+			p.ogInd = i;
+			p.winnerInd = i;
+			p.loserInserted = false;
+		}
+		else
+		{
+			p.winner = d[i + 1];
+			p.loser = d[i];
+			p.ogInd = i + 1;
+			p.winnerInd = i + 1;
+			p.loserInserted = false;
+		}
+		pairs.push_back(p);
+	}
+	if (i < d.size()) //for odd
+	{
+		Pair p;
+		p.winner = d[i];
+		p.loser = -1;
+		p.ogInd = pairs.size();
+		p.winnerInd = pairs.size();
+		p.loserInserted = false;
+		pairs.push_back(p);
+	}
+	
+	//making pairs and sort winner
+	std::vector<int> sortedWinner;
+	recursiveSort(sortedWinner, pairs);
+	
+	//putting the right index
+	for (size_t idx = 0; idx < sortedWinner.size(); ++idx)
+	{
+		for (size_t j = 0; j < pairs.size(); ++j)
+		{
+			if (pairs[j].winner == sortedWinner[idx] && pairs[j].winnerInd == pairs[j].ogInd)
+			{
+				pairs[j].winnerInd = idx;
+				break;
+			}
+		}
+	}
+	
+	jacobsthalBinary(sortedWinner, pairs);
+	insertOtherLosers(sortedWinner, pairs);
+}
 
 //Public Method;
 void	PmergeMe::execPmergeMe(int ac, char **av)
@@ -283,12 +339,12 @@ void	PmergeMe::execPmergeMe(int ac, char **av)
 	clock_t end = clock();
 	double duration_vec = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000.0;
 
-	// clock_t start1 = clock();
-	// fordJohnFSort(this->_listDeq);
-	// clock_t end1= clock();
-	// double duration_deq = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC * 1000000.0;
+	clock_t start1 = clock();
+	fordJohnFSort(this->_listDeq);
+	clock_t end1= clock();
+	double duration_deq = static_cast<double>(end1 - start1) / CLOCKS_PER_SEC * 1000000.0;
 
 	//print Chrono:
-	std::cout << "Time to process a range of " << this->_rangeSize << " elements with std::vector " << duration_vec << " us" << std::endl;
-	// std::cout << "Time to process a range of " << this->_rangeSize << " elements with std::deque " << duration_deq << " us" << std::endl;
+	std::cout << "Time to process a range of " << this->_rangeSize << " elements with std::[vector] : " << duration_vec << " us" << std::endl;
+	std::cout << "Time to process a range of " << this->_rangeSize << " elements with std::[deque] : " << duration_deq << " us" << std::endl;
 }

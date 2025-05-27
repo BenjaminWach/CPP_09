@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:12 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/27 01:30:51 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/28 00:38:59 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class	Pair
 
 			int	winner;
 			int	loser;
+			int	ogInd;
 			int	winnerInd;
 			bool	loserInserted;
 };
