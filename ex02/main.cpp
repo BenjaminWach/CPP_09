@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:05:37 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/16 18:13:17 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/26 21:33:51 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int main(int ac, char *av[])
 	}
 
 	PmergeMe sort;
-	sort.execPmergeMe(av);
+	sort.execPmergeMe(ac, av);
 
 	return (0);
 }

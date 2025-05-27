@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:12 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/18 23:20:56 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/27 01:30:51 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,34 @@
 #include <vector>
 #include <deque>
 
+class	Pair
+{
+	public:
+			Pair();
+			Pair(const Pair& rhn);
+			Pair& operator=(const Pair& other);
+			~Pair();
+
+			int	winner;
+			int	loser;
+			int	winnerInd;
+			bool	loserInserted;
+};
+
 class	PmergeMe
 {
 	private:
 			size_t	_rangeSize;
-			std::vector<std::pair<int, int> >	_Vec;
-			std::deque<std::pair<int, int> >	_Deq;
+			std::vector<int>	_listV;
+			std::deque<int>		_listDeq;
 
-			void	fordJohnFSort(std::vector<std::pair<int,int> >& v);
-			void	fordJohnFSort(std::deque<std::pair<int,int> >& d);
+			void	fordJohnFSort(std::vector<int>& v);
+			void	fordJohnFSort(std::deque<int>& d);
 
 			void	loadAllData(char **av);
 			void	printBefore(char **av);
-			void	printAfter();
+			void	printAfterV(const std::vector<int>& sorted);
+			void	printAfterD(const std::deque<int>& sorted);
 
 	public:
 			PmergeMe();
@@ -40,5 +55,5 @@ class	PmergeMe
 
 			PmergeMe& operator=(const PmergeMe& other);
 
-			void	execPmergeMe(char **av);
+			void	execPmergeMe(int ac, char **av);
 };

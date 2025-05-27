@@ -6,7 +6,7 @@
 #    By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/14 14:01:16 by bwach             #+#    #+#              #
-#    Updated: 2025/05/16 18:12:12 by bwach            ###   ########.fr        #
+#    Updated: 2025/05/27 00:46:05 by bwach            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,8 +22,8 @@ CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 SOURCE = main.cpp \
+		PmergeMe.cpp \
 	
-
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(SOURCE:.cpp=.o))
 
