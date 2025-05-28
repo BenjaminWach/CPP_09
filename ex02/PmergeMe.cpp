@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:06:07 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/28 00:42:41 by bwach            ###   ########.fr       */
+/*   Updated: 2025/05/29 00:45:45 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,9 @@ void	PmergeMe::loadAllData(char **av)
 		_listV.push_back(a);
 		_listDeq.push_back(a);
 	}
+
+	//print Before:
+	printBefore(av);
 
 	if (this->_listV.size() != this->_rangeSize || this->_listDeq.size() != this->_rangeSize)
 	{
@@ -176,6 +179,12 @@ static	void	jacobsthalBinary(std::vector<int>& sortedWinner, std::vector<Pair>& 
 		}
 		sortedWinner.insert(sortedWinner.begin() + left, loser);
 		pairs[i].loserInserted = true;
+
+		for (size_t k = 0; k < pairs.size(); ++k)
+			{
+				if (static_cast<size_t>(pairs[k].winnerInd) > left)
+					pairs[k].winnerInd++;
+			}
 	}
 }
 
@@ -200,6 +209,12 @@ static void	insertOtherLosers(std::vector<int>& finalList, std::vector<Pair>& pa
 			}
 			finalList.insert(finalList.begin() + left, loser);
 			pairs[i].loserInserted = true;
+
+			for (size_t k = 0; k < pairs.size(); ++k)
+			{
+				if (static_cast<size_t>(pairs[k].winnerInd) > left)
+					pairs[k].winnerInd++;
+			}
 		}
 	}
 }
@@ -215,16 +230,16 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		{
 			p.winner = v[i];
 			p.loser = v[i + 1];
-			p.ogInd = i;
 			p.winnerInd = i;
+			p.winnerPlaced = false;
 			p.loserInserted = false;
 		}
 		else
 		{
 			p.winner = v[i + 1];
 			p.loser = v[i];
-			p.ogInd = i + 1;
 			p.winnerInd = i + 1;
+			p.winnerPlaced = false;
 			p.loserInserted = false;
 		}
 		pairs.push_back(p);
@@ -234,8 +249,8 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 		Pair p;
 		p.winner = v[i];
 		p.loser = -1;
-		p.ogInd = pairs.size();
 		p.winnerInd = pairs.size();
+		p.winnerPlaced = false;
 		p.loserInserted = false;
 		pairs.push_back(p);
 	}
@@ -249,9 +264,10 @@ void	PmergeMe::fordJohnFSort(std::vector<int>& v)
 	{
 		for (size_t j = 0; j < pairs.size(); ++j)
 		{
-			if (pairs[j].winner == sortedWinner[idx] && pairs[j].winnerInd == pairs[j].ogInd)
+			if (!pairs[j].winnerPlaced && pairs[j].winner == sortedWinner[idx])
 			{
 				pairs[j].winnerInd = idx;
+				pairs[j].winnerPlaced = true;
 				break;
 			}
 		}
@@ -275,16 +291,16 @@ std::vector<Pair> pairs;
 		{
 			p.winner = d[i];
 			p.loser = d[i + 1];
-			p.ogInd = i;
 			p.winnerInd = i;
+			p.winnerPlaced = false;
 			p.loserInserted = false;
 		}
 		else
 		{
 			p.winner = d[i + 1];
 			p.loser = d[i];
-			p.ogInd = i + 1;
 			p.winnerInd = i + 1;
+			p.winnerPlaced = false;
 			p.loserInserted = false;
 		}
 		pairs.push_back(p);
@@ -294,8 +310,8 @@ std::vector<Pair> pairs;
 		Pair p;
 		p.winner = d[i];
 		p.loser = -1;
-		p.ogInd = pairs.size();
 		p.winnerInd = pairs.size();
+		p.winnerPlaced = false;
 		p.loserInserted = false;
 		pairs.push_back(p);
 	}
@@ -304,14 +320,16 @@ std::vector<Pair> pairs;
 	std::vector<int> sortedWinner;
 	recursiveSort(sortedWinner, pairs);
 	
+	//for (size_t i = 0; i < sortedWinner.size(); ++i) std::cout << "LES WINNERS: " << sortedWinner[i] << std::endl;
 	//putting the right index
 	for (size_t idx = 0; idx < sortedWinner.size(); ++idx)
 	{
 		for (size_t j = 0; j < pairs.size(); ++j)
 		{
-			if (pairs[j].winner == sortedWinner[idx] && pairs[j].winnerInd == pairs[j].ogInd)
+			if (!pairs[j].winnerPlaced && pairs[j].winner == sortedWinner[idx])
 			{
 				pairs[j].winnerInd = idx;
+				pairs[j].winnerPlaced = true;
 				break;
 			}
 		}
@@ -326,10 +344,7 @@ void	PmergeMe::execPmergeMe(int ac, char **av)
 {
 	this->_rangeSize = ac - 1;
 	this->_listV.reserve(_rangeSize);
-
-	//print Before:
-	printBefore(av);
-
+	
 	//load:
 	loadAllData(av);
 
