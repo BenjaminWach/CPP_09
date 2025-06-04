@@ -6,7 +6,7 @@
 /*   By: bwach <bwach@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 14:59:58 by bwach             #+#    #+#             */
-/*   Updated: 2025/05/15 01:53:29 by bwach            ###   ########.fr       */
+/*   Updated: 2025/06/04 16:10:14 by bwach            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,10 @@ void	ExchangeRate::processInputFile(const std::string& inputFile)
 
 		// Validate date and value
 		if (!isValidDate(date))
+		{
+			std::cerr << "Error: invalid date => " << date << std::endl;
 			continue;
+		}
 		if (!isValidValue(valueStr))
 			continue;
 
